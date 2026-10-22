@@ -1,5 +1,6 @@
 package com.shubham.prompt_submission_platform.service;
 
+import com.shubham.prompt_submission_platform.exceptions.UserAlreadyExistsException;
 import com.shubham.prompt_submission_platform.model.User;
 import com.shubham.prompt_submission_platform.repository.UserRepository;
 import com.shubham.prompt_submission_platform.security.UserPrincipal;
@@ -18,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserAlreadyExistsException("User not found"));
 
         return new UserPrincipal(user);
     }

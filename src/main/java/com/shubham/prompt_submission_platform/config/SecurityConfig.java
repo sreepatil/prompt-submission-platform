@@ -1,5 +1,7 @@
 package com.shubham.prompt_submission_platform.config;
 
+import com.shubham.prompt_submission_platform.security.CustomAccessDeniedHandler;
+import com.shubham.prompt_submission_platform.security.CustomAuthenticationEntryPoint;
 import com.shubham.prompt_submission_platform.security.JwtAuthenticationFilter;
 import com.shubham.prompt_submission_platform.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,8 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -31,6 +35,10 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(request -> request.requestMatchers("/api/users/login").permitAll()
                         .anyRequest().authenticated())
+
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                        .authenticationEntryPoint(customAuthenticationEntryPoint))
 
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
